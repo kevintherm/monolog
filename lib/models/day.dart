@@ -13,6 +13,8 @@ class Day {
     required this.user,
   });
 
+  DateTime get dateTime => DateTime.parse(date);
+
   factory Day.fromRecord(dynamic record) {
     return Day(
       id: record.id as String,

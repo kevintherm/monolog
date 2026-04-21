@@ -9,7 +9,8 @@ import 'brutalist_button.dart';
 import 'confirm_bottom_sheet.dart';
 
 class MealSection extends StatelessWidget {
-  const MealSection({super.key});
+  final bool readOnly;
+  const MealSection({super.key, this.readOnly = false});
 
   @override
   Widget build(BuildContext context) {
@@ -60,7 +61,7 @@ class MealSection extends StatelessWidget {
                 padding: const EdgeInsets.only(bottom: MonoSpacing.sm),
                 child: Dismissible(
                   key: Key(meal.id),
-                  direction: DismissDirection.endToStart,
+                  direction: readOnly ? DismissDirection.none : DismissDirection.endToStart,
                   confirmDismiss: (direction) async {
                     return await ConfirmBottomSheet.show(
                       context,
@@ -152,13 +153,15 @@ class MealSection extends StatelessWidget {
                     ),
                 ),
               )),
-        Gap.md,
-        TileButton(
-          label: 'Add Meal',
-          icon: Icons.add,
-          variant: BrutalistButtonVariant.primary,
-          onPressed: () => Navigator.pushNamed(context, '/add-meal'),
-        ),
+        if (!readOnly) ...[
+          Gap.md,
+          TileButton(
+            label: 'Add Meal',
+            icon: Icons.add,
+            variant: BrutalistButtonVariant.primary,
+            onPressed: () => Navigator.pushNamed(context, '/add-meal'),
+          ),
+        ],
       ],
     );
   }

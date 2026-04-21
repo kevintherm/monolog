@@ -8,6 +8,7 @@ import '../widgets/sleep_input.dart';
 import '../widgets/meal_section.dart';
 import '../widgets/workout_section.dart';
 import '../widgets/mood_input.dart';
+import '../widgets/confirm_bottom_sheet.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -67,10 +68,34 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ),
                           GestureDetector(
+                            onTap: () => Navigator.pushNamed(context, '/history'),
+                            child: Container(
+                              padding: const EdgeInsets.all(MonoSpacing.sm),
+                              decoration: BoxDecoration(
+                                border: Border.all(color: MonoColors.border, width: 2),
+                              ),
+                              child: const Icon(
+                                Icons.history,
+                                color: MonoColors.amber,
+                                size: 22,
+                              ),
+                            ),
+                          ),
+                          Gap.hSm,
+                          GestureDetector(
                             onTap: () async {
-                              await VeloquentService.instance.logout();
-                              if (context.mounted) {
-                                Navigator.pushReplacementNamed(context, '/login');
+                              final confirmed = await ConfirmBottomSheet.show(
+                                context,
+                                title: 'LOGOUT',
+                                message: 'Are you sure you want to end your session?',
+                                confirmLabel: 'LOGOUT',
+                              );
+
+                              if (confirmed == true && context.mounted) {
+                                await VeloquentService.instance.logout();
+                                if (context.mounted) {
+                                  Navigator.pushReplacementNamed(context, '/login');
+                                }
                               }
                             },
                             child: Container(

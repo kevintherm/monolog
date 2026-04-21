@@ -5,7 +5,8 @@ import '../theme/brutalist_theme.dart';
 import 'brutalist_button.dart';
 
 class WorkoutSection extends StatelessWidget {
-  const WorkoutSection({super.key});
+  final bool readOnly;
+  const WorkoutSection({super.key, this.readOnly = false});
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +45,7 @@ class WorkoutSection extends StatelessWidget {
           ...workouts.map((workout) => Padding(
                 padding: const EdgeInsets.only(bottom: MonoSpacing.sm),
                 child: GestureDetector(
-                  onTap: () => Navigator.pushNamed(
+                  onTap: readOnly ? null : () => Navigator.pushNamed(
                     context,
                     '/exercise-detail',
                     arguments: workout,
@@ -88,13 +89,15 @@ class WorkoutSection extends StatelessWidget {
                     ),
                 ),
               )),
-        Gap.md,
-        TileButton(
-          label: 'Add Exercise',
-          icon: Icons.add,
-          variant: BrutalistButtonVariant.primary,
-          onPressed: () => Navigator.pushNamed(context, '/exercise-detail'),
-        ),
+        if (!readOnly) ...[
+          Gap.md,
+          TileButton(
+            label: 'Add Exercise',
+            icon: Icons.add,
+            variant: BrutalistButtonVariant.primary,
+            onPressed: () => Navigator.pushNamed(context, '/exercise-detail'),
+          ),
+        ],
       ],
     );
   }

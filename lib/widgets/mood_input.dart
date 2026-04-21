@@ -4,7 +4,8 @@ import '../providers/day_provider.dart';
 import '../theme/brutalist_theme.dart';
 
 class MoodInput extends StatelessWidget {
-  const MoodInput({super.key});
+  final bool readOnly;
+  const MoodInput({super.key, this.readOnly = false});
 
   static const List<IconData> _icons = [
     Icons.sentiment_very_dissatisfied,  
@@ -41,7 +42,7 @@ class MoodInput extends StatelessWidget {
 
               return Expanded(
                 child: GestureDetector(
-                  onTap: () => provider.updateMood(mood),
+                  onTap: readOnly ? null : () => provider.updateMood(mood),
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 150),
                     margin: EdgeInsets.only(right: index < 4 ? MonoSpacing.xs : 0),

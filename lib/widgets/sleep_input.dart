@@ -4,7 +4,8 @@ import '../providers/day_provider.dart';
 import '../theme/brutalist_theme.dart';
 
 class SleepInput extends StatefulWidget {
-  const SleepInput({super.key});
+  final bool readOnly;
+  const SleepInput({super.key, this.readOnly = false});
 
   @override
   State<SleepInput> createState() => _SleepInputState();
@@ -46,15 +47,16 @@ class _SleepInputState extends State<SleepInput> {
           Gap.md,
           Row(
             children: [
-              _LargeStepperButton(
-                icon: Icons.remove,
-                onPressed: () {
-                  final current = hours ?? 0;
-                  if (current > 0) {
-                    provider.updateSleepHours((current - 0.5).clamp(0, 24));
-                  }
-                },
-              ),
+              if (!widget.readOnly)
+                _LargeStepperButton(
+                  icon: Icons.remove,
+                  onPressed: () {
+                    final current = hours ?? 0;
+                    if (current > 0) {
+                      provider.updateSleepHours((current - 0.5).clamp(0, 24));
+                    }
+                  },
+                ),
               Expanded(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -75,15 +77,16 @@ class _SleepInputState extends State<SleepInput> {
                   ],
                 ),
               ),
-              _LargeStepperButton(
-                icon: Icons.add,
-                onPressed: () {
-                  final current = hours ?? 0;
-                  if (current < 24) {
-                    provider.updateSleepHours((current + 0.5).clamp(0, 24));
-                  }
-                },
-              ),
+              if (!widget.readOnly)
+                _LargeStepperButton(
+                  icon: Icons.add,
+                  onPressed: () {
+                    final current = hours ?? 0;
+                    if (current < 24) {
+                      provider.updateSleepHours((current + 0.5).clamp(0, 24));
+                    }
+                  },
+                ),
             ],
           ),
         ],

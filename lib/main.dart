@@ -8,6 +8,9 @@ import 'pages/register_page.dart';
 import 'pages/home_page.dart';
 import 'pages/add_meal_page.dart';
 import 'pages/exercise_detail_page.dart';
+import 'pages/history_page.dart';
+import 'pages/history_day_detail_page.dart';
+import 'models/day.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -44,6 +47,13 @@ class MonoLogApp extends StatelessWidget {
               break;
             case '/exercise-detail':
               page = const ExerciseDetailPage();
+              break;
+            case '/history':
+              page = const HistoryPage();
+              break;
+            case '/history-detail':
+              final day = settings.arguments as Day;
+              page = HistoryDayDetailPage(day: day);
               break;
             default:
               page = const LoginPage();

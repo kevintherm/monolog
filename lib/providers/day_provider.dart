@@ -66,6 +66,38 @@ class DayProvider extends ChangeNotifier {
     }
   }
 
+  Future<List<Day>> fetchHistory() async {
+    if (_userId == null) return [];
+    try {
+      final result = await _service.sdk.records.list(
+        AppConfig.daysCollection,
+        filter: 'user = "$_userId"',
+        sort: '-date',
+        perPage: 100,
+      );
+      return result.data.map((r) => Day.fromRecord(r)).toList();
+    } catch (e) {
+      _error = e.toString();
+      return [];
+    }
+  }
+
+  Future<void> loadDay(Day day) async {
+    _loading = true;
+    _error = null;
+    _today = day;
+    notifyListeners();
+
+    try {
+      await Future.wait([_loadMeals(), _loadWorkouts()]);
+    } catch (e) {
+      _error = e.toString();
+    } finally {
+      _loading = false;
+      notifyListeners();
+    }
+  }
+
   Future<void> _loadMeals() async {
     if (_today == null) return;
     final result = await _service.sdk.records.list(
