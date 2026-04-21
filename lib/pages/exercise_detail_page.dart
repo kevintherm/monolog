@@ -6,6 +6,7 @@ import '../theme/brutalist_theme.dart';
 import '../widgets/brutalist_button.dart';
 import '../widgets/set_input_row.dart';
 import '../widgets/confirm_bottom_sheet.dart';
+import '../widgets/skeleton.dart';
 
 class ExerciseDetailPage extends StatefulWidget {
   const ExerciseDetailPage({super.key});
@@ -265,17 +266,7 @@ class _ExerciseDetailPageState extends State<ExerciseDetailPage> {
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const SizedBox(
-                              width: 16,
-                              height: 16,
-                              child: CircularProgressIndicator(
-                                color: MonoColors.amber,
-                                strokeWidth: 2,
-                              ),
-                            ),
-                            Gap.hSm,
-                            Text('Loading last week...',
-                                style: MonoText.bodySm.copyWith(color: MonoColors.textMuted)),
+                            const SkeletonBox(width: 100, height: 16),
                           ],
                         ),
                       )

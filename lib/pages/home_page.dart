@@ -9,6 +9,7 @@ import '../widgets/meal_section.dart';
 import '../widgets/workout_section.dart';
 import '../widgets/mood_input.dart';
 import '../widgets/confirm_bottom_sheet.dart';
+import '../widgets/skeleton.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -120,9 +121,7 @@ class _HomePageState extends State<HomePage> {
 
               if (provider.loading)
                 const SliverFillRemaining(
-                  child: Center(
-                    child: CircularProgressIndicator(color: MonoColors.amber),
-                  ),
+                  child: HomeSkeleton(),
                 )
               else if (provider.error != null)
                 SliverFillRemaining(

@@ -8,6 +8,7 @@ import '../widgets/meal_section.dart';
 import '../widgets/workout_section.dart';
 import '../widgets/sleep_input.dart';
 import '../widgets/mood_input.dart';
+import '../widgets/skeleton.dart';
 
 class HistoryDayDetailPage extends StatefulWidget {
   final Day day;
@@ -78,7 +79,7 @@ class _HistoryDayDetailPageState extends State<HistoryDayDetailPage> {
               ),
               Expanded(
                 child: provider.loading 
-                  ? const Center(child: CircularProgressIndicator())
+                  ? const HomeSkeleton()
                   : SingleChildScrollView(
                       padding: const EdgeInsets.all(MonoSpacing.base),
                       child: Column(

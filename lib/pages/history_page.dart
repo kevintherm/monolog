@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../models/day.dart';
 import '../providers/day_provider.dart';
 import '../theme/brutalist_theme.dart';
+import '../widgets/skeleton.dart';
 
 class HistoryPage extends StatelessWidget {
   const HistoryPage({super.key});
@@ -41,7 +42,7 @@ class HistoryPage extends StatelessWidget {
                 future: context.read<DayProvider>().fetchHistory(),
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
+                    return const HistorySkeleton();
                   }
 
                   if (snapshot.hasError) {
