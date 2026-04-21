@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 class ExerciseSet {
   final int reps;
   final double weight;
@@ -32,8 +34,16 @@ class Workout {
   factory Workout.fromRecord(dynamic record) {
     final rawSets = record.get('sets');
     List<ExerciseSet> parsedSets = [];
-    if (rawSets is List) {
-      parsedSets = rawSets
+    
+    dynamic setsData = rawSets;
+    if (rawSets is String && rawSets.isNotEmpty) {
+      try {
+        setsData = jsonDecode(rawSets);
+      } catch (_) {}
+    }
+
+    if (setsData is List) {
+      parsedSets = setsData
           .map((s) => ExerciseSet.fromMap(Map<String, dynamic>.from(s as Map)))
           .toList();
     }

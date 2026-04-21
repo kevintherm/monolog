@@ -112,6 +112,38 @@ class _ExerciseDetailPageState extends State<ExerciseDetailPage> {
     if (mounted) Navigator.pop(context);
   }
 
+  Future<void> _delete() async {
+    if (_existingWorkout == null) return;
+    
+    // Simple confirmation dialog
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        backgroundColor: MonoColors.surface,
+        title: Text('DELETE EXERCISE', style: MonoText.h2),
+        content: Text('Are you sure you want to remove this exercise?', style: MonoText.body),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: Text('CANCEL', style: MonoText.label.copyWith(color: MonoColors.textSecondary)),
+          ),
+          BrutalistButton(
+            label: 'DELETE',
+            small: true,
+            color: MonoColors.danger,
+            onPressed: () => Navigator.pop(context, true),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true && mounted) {
+      setState(() => _saving = true);
+      await context.read<DayProvider>().deleteWorkout(_existingWorkout!.id);
+      if (mounted) Navigator.pop(context);
+    }
+  }
+
   @override
   void dispose() {
     _exerciseController.dispose();
@@ -351,6 +383,17 @@ class _ExerciseDetailPageState extends State<ExerciseDetailPage> {
                       icon: Icons.check,
                       isLoading: _saving,
                     ),
+                    if (_isEditing) ...[
+                      Gap.xl,
+                      BrutalistButton(
+                        label: 'Delete Exercise',
+                        onPressed: _delete,
+                        fullWidth: true,
+                        color: MonoColors.surfaceHigh,
+                        textColor: MonoColors.danger,
+                        icon: Icons.delete_outline,
+                      ),
+                    ],
                     Gap.xxxl,
                   ],
                 ),

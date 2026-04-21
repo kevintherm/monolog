@@ -24,7 +24,7 @@ class WorkoutSection extends StatelessWidget {
             if (workouts.isNotEmpty)
               Text(
                 '${workouts.length} EXERCISE${workouts.length == 1 ? '' : 'S'}',
-                style: MonoText.labelSm.copyWith(color: MonoColors.textSecondary),
+                style: MonoText.numberSm.copyWith(color: MonoColors.textSecondary),
               ),
           ],
         ),
@@ -49,16 +49,6 @@ class WorkoutSection extends StatelessWidget {
                     '/exercise-detail',
                     arguments: workout,
                   ),
-                  child: Dismissible(
-                    key: Key(workout.id),
-                    direction: DismissDirection.endToStart,
-                    background: Container(
-                      alignment: Alignment.centerRight,
-                      padding: const EdgeInsets.only(right: MonoSpacing.base),
-                      color: MonoColors.danger,
-                      child: const Icon(Icons.delete, color: Colors.white),
-                    ),
-                    onDismissed: (_) => provider.deleteWorkout(workout.id),
                     child: Container(
                       width: double.infinity,
                       padding: MonoDecor.cardPadding,
@@ -96,7 +86,6 @@ class WorkoutSection extends StatelessWidget {
                         ],
                       ),
                     ),
-                  ),
                 ),
               )),
         Gap.md,
