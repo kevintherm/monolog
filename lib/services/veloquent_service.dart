@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:veloquent_sdk/veloquent_sdk.dart';
 import '../config.dart';
+import 'secure_storage_adapter.dart';
 
 class VeloquentService {
   VeloquentService._();
@@ -24,7 +25,7 @@ class VeloquentService {
     sdk = Veloquent(
       apiUrl: AppConfig.apiUrl,
       http: _HeaderAwareFetchAdapter(client: client),
-      storage: await createLocalStorageAdapter(),
+      storage: SecureStorageAdapter(),
     );
   }
 
