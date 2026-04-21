@@ -6,6 +6,7 @@ import '../providers/day_provider.dart';
 import '../theme/brutalist_theme.dart';
 import '../config.dart';
 import 'brutalist_button.dart';
+import 'confirm_bottom_sheet.dart';
 
 class MealSection extends StatelessWidget {
   const MealSection({super.key});
@@ -60,6 +61,14 @@ class MealSection extends StatelessWidget {
                 child: Dismissible(
                   key: Key(meal.id),
                   direction: DismissDirection.endToStart,
+                  confirmDismiss: (direction) async {
+                    return await ConfirmBottomSheet.show(
+                      context,
+                      title: 'DELETE MEAL',
+                      message: 'Are you sure you want to remove this meal?',
+                      confirmLabel: 'DELETE',
+                    );
+                  },
                   background: Container(
                     alignment: Alignment.centerRight,
                     padding: const EdgeInsets.only(right: MonoSpacing.base),

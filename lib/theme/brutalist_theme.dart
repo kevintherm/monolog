@@ -227,5 +227,15 @@ ThemeData buildMonoLogTheme() {
       color: MonoColors.border,
       thickness: 2,
     ),
+    snackBarTheme: SnackBarThemeData(
+      behavior: SnackBarBehavior.fixed,
+      backgroundColor: MonoColors.surfaceHigh,
+      contentTextStyle: MonoText.label.copyWith(color: MonoColors.textPrimary),
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.zero,
+        side: BorderSide(color: MonoColors.amber, width: 2),
+      ),
+      elevation: 0,
+    ),
   );
 }

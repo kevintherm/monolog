@@ -249,56 +249,54 @@ class _AddMealPageState extends State<AddMealPage> {
                     Row(
                       children: [
                         Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('CALORIES', style: MonoText.label.copyWith(color: MonoColors.textSecondary)),
-                              Gap.md,
-                              Container(
-                                decoration: MonoDecor.card(),
-                                padding: MonoDecor.cardPadding,
-                                child: TextField(
+                          child: Container(
+                            decoration: MonoDecor.card(),
+                            padding: MonoDecor.cardPadding,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('CALORIES', style: MonoText.label.copyWith(color: MonoColors.amber)),
+                                Gap.sm,
+                                TextField(
                                   controller: _caloriesController,
                                   keyboardType: TextInputType.number,
                                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                                  style: MonoText.numberSm,
-                                  textAlign: TextAlign.center,
+                                  style: MonoText.number,
                                   decoration: InputDecoration(
                                     hintText: '0',
-                                    hintStyle: MonoText.numberSm.copyWith(color: MonoColors.textMuted),
+                                    hintStyle: MonoText.number.copyWith(color: MonoColors.textMuted),
                                     suffixText: 'CAL',
                                     suffixStyle: MonoText.labelSm.copyWith(color: MonoColors.textSecondary),
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                         Gap.hBase,
                         Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text('PROTEIN', style: MonoText.label.copyWith(color: MonoColors.textSecondary)),
-                              Gap.md,
-                              Container(
-                                decoration: MonoDecor.card(),
-                                padding: MonoDecor.cardPadding,
-                                child: TextField(
+                          child: Container(
+                            decoration: MonoDecor.card(),
+                            padding: MonoDecor.cardPadding,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('PROTEIN', style: MonoText.label.copyWith(color: MonoColors.amber)),
+                                Gap.sm,
+                                TextField(
                                   controller: _proteinController,
                                   keyboardType: TextInputType.number,
                                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                                  style: MonoText.numberSm,
-                                  textAlign: TextAlign.center,
+                                  style: MonoText.number,
                                   decoration: InputDecoration(
                                     hintText: '0',
-                                    hintStyle: MonoText.numberSm.copyWith(color: MonoColors.textMuted),
+                                    hintStyle: MonoText.number.copyWith(color: MonoColors.textMuted),
                                     suffixText: 'G',
                                     suffixStyle: MonoText.labelSm.copyWith(color: MonoColors.textSecondary),
                                   ),
                                 ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
                       ],
