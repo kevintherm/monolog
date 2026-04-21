@@ -92,7 +92,7 @@ class WorkoutSection extends StatelessWidget {
         TileButton(
           label: 'Add Exercise',
           icon: Icons.add,
-          color: MonoColors.gold,
+          variant: BrutalistButtonVariant.primary,
           onPressed: () => Navigator.pushNamed(context, '/exercise-detail'),
         ),
       ],

@@ -1,9 +1,17 @@
 import 'package:flutter/material.dart';
 import '../theme/brutalist_theme.dart';
 
+enum BrutalistButtonVariant {
+  primary,
+  secondary,
+  danger,
+  tonal,
+}
+
 class BrutalistButton extends StatefulWidget {
   final String label;
   final VoidCallback onPressed;
+  final BrutalistButtonVariant variant;
   final Color? color;
   final Color? textColor;
   final IconData? icon;
@@ -15,6 +23,7 @@ class BrutalistButton extends StatefulWidget {
     super.key,
     required this.label,
     required this.onPressed,
+    this.variant = BrutalistButtonVariant.primary,
     this.color,
     this.textColor,
     this.icon,
@@ -46,11 +55,39 @@ class _BrutalistButtonState extends State<BrutalistButton> with SingleTickerProv
     super.dispose();
   }
 
+  Color get _bgColor {
+    if (widget.color != null) return widget.color!;
+    switch (widget.variant) {
+      case BrutalistButtonVariant.primary:
+        return MonoColors.amber;
+      case BrutalistButtonVariant.secondary:
+        return MonoColors.surfaceHigh;
+      case BrutalistButtonVariant.danger:
+        return MonoColors.danger;
+      case BrutalistButtonVariant.tonal:
+        return MonoColors.surface;
+    }
+  }
+
+  Color get _fgColor {
+    if (widget.textColor != null) return widget.textColor!;
+    switch (widget.variant) {
+      case BrutalistButtonVariant.primary:
+        return Colors.black;
+      case BrutalistButtonVariant.secondary:
+        return MonoColors.amber;
+      case BrutalistButtonVariant.danger:
+        return Colors.white;
+      case BrutalistButtonVariant.tonal:
+        return MonoColors.textSecondary;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     if (widget.isLoading) _pressed = false;
-    final bgColor = widget.color ?? MonoColors.amber;
-    final fgColor = widget.textColor ?? Colors.black;
+    final bgColor = _bgColor;
+    final fgColor = _fgColor;
 
     return GestureDetector(
       onTapDown: widget.isLoading ? null : (_) => setState(() => _pressed = true),
@@ -120,7 +157,8 @@ class TileButton extends StatefulWidget {
   final String label;
   final String? subtitle;
   final IconData icon;
-  final Color color;
+  final BrutalistButtonVariant variant;
+  final Color? color;
   final VoidCallback onPressed;
 
   const TileButton({
@@ -128,7 +166,8 @@ class TileButton extends StatefulWidget {
     required this.label,
     this.subtitle,
     required this.icon,
-    required this.color,
+    this.variant = BrutalistButtonVariant.secondary,
+    this.color,
     required this.onPressed,
   });
 
@@ -139,8 +178,26 @@ class TileButton extends StatefulWidget {
 class _TileButtonState extends State<TileButton> {
   bool _pressed = false;
 
+  Color get _bgColor {
+    if (widget.color != null) return widget.color!;
+    switch (widget.variant) {
+      case BrutalistButtonVariant.primary:
+        return MonoColors.amber;
+      case BrutalistButtonVariant.secondary:
+        return MonoColors.surfaceHigh;
+      case BrutalistButtonVariant.danger:
+        return MonoColors.danger;
+      case BrutalistButtonVariant.tonal:
+        return MonoColors.surface;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final bgColor = _bgColor;
+    final fgColor = widget.variant == BrutalistButtonVariant.primary ? Colors.black : MonoColors.textPrimary;
+    final iconColor = widget.variant == BrutalistButtonVariant.primary ? Colors.black : MonoColors.amber;
+
     return GestureDetector(
       onTapDown: (_) => setState(() => _pressed = true),
       onTapUp: (_) {
@@ -153,7 +210,7 @@ class _TileButtonState extends State<TileButton> {
         width: double.infinity,
         padding: const EdgeInsets.all(MonoSpacing.xl),
         decoration: BoxDecoration(
-          color: widget.color,
+          color: bgColor,
           border: Border.all(color: Colors.black, width: MonoDecor.borderWidth),
           boxShadow: _pressed
               ? []
@@ -171,7 +228,7 @@ class _TileButtonState extends State<TileButton> {
             : Matrix4.identity(),
         child: Row(
           children: [
-            Icon(widget.icon, color: Colors.black, size: 28),
+            Icon(widget.icon, color: iconColor, size: 28),
             Gap.hBase,
             Expanded(
               child: Column(
@@ -179,17 +236,17 @@ class _TileButtonState extends State<TileButton> {
                 children: [
                   Text(
                     widget.label.toUpperCase(),
-                    style: MonoText.labelLg.copyWith(color: Colors.black),
+                    style: MonoText.labelLg.copyWith(color: fgColor),
                   ),
                   if (widget.subtitle != null)
                     Text(
                       widget.subtitle!,
-                      style: MonoText.bodySm.copyWith(color: Colors.black87),
+                      style: MonoText.bodySm.copyWith(color: fgColor.withValues(alpha: 0.7)),
                     ),
                 ],
               ),
             ),
-            const Icon(Icons.arrow_forward, color: Colors.black, size: 24),
+            Icon(Icons.arrow_forward, color: iconColor, size: 24),
           ],
         ),
       ),

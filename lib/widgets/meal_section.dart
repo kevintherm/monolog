@@ -147,7 +147,7 @@ class MealSection extends StatelessWidget {
         TileButton(
           label: 'Add Meal',
           icon: Icons.add,
-          color: MonoColors.amberLight,
+          variant: BrutalistButtonVariant.primary,
           onPressed: () => Navigator.pushNamed(context, '/add-meal'),
         ),
       ],

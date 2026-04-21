@@ -5,6 +5,7 @@ import '../providers/day_provider.dart';
 import '../theme/brutalist_theme.dart';
 import '../widgets/brutalist_button.dart';
 import '../widgets/set_input_row.dart';
+import '../widgets/confirm_bottom_sheet.dart';
 
 class ExerciseDetailPage extends StatefulWidget {
   const ExerciseDetailPage({super.key});
@@ -115,26 +116,11 @@ class _ExerciseDetailPageState extends State<ExerciseDetailPage> {
   Future<void> _delete() async {
     if (_existingWorkout == null) return;
     
-    // Simple confirmation dialog
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        backgroundColor: MonoColors.surface,
-        title: Text('DELETE EXERCISE', style: MonoText.h2),
-        content: Text('Are you sure you want to remove this exercise?', style: MonoText.body),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text('CANCEL', style: MonoText.label.copyWith(color: MonoColors.textSecondary)),
-          ),
-          BrutalistButton(
-            label: 'DELETE',
-            small: true,
-            color: MonoColors.danger,
-            onPressed: () => Navigator.pop(context, true),
-          ),
-        ],
-      ),
+    final confirmed = await ConfirmBottomSheet.show(
+      context,
+      title: 'DELETE EXERCISE',
+      message: 'Are you sure you want to remove this exercise and all its sets?',
+      confirmLabel: 'DELETE',
     );
 
     if (confirmed == true && mounted) {
@@ -367,8 +353,7 @@ class _ExerciseDetailPageState extends State<ExerciseDetailPage> {
                             onPressed: () => _addSetRow(),
                             fullWidth: true,
                             small: true,
-                            color: MonoColors.surfaceHigh,
-                            textColor: MonoColors.amber,
+                            variant: BrutalistButtonVariant.secondary,
                             icon: Icons.add,
                           ),
                         ],
@@ -380,6 +365,7 @@ class _ExerciseDetailPageState extends State<ExerciseDetailPage> {
                       label: _isEditing ? 'Update Exercise' : 'Save Exercise',
                       onPressed: _save,
                       fullWidth: true,
+                      variant: BrutalistButtonVariant.primary,
                       icon: Icons.check,
                       isLoading: _saving,
                     ),
@@ -389,7 +375,7 @@ class _ExerciseDetailPageState extends State<ExerciseDetailPage> {
                         label: 'Delete Exercise',
                         onPressed: _delete,
                         fullWidth: true,
-                        color: MonoColors.surfaceHigh,
+                        variant: BrutalistButtonVariant.tonal,
                         textColor: MonoColors.danger,
                         icon: Icons.delete_outline,
                       ),
