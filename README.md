@@ -1,17 +1,47 @@
-# monolog
+# MonoLog
 
-A new Flutter project.
+MonoLog is an opinionated minimalist daily consistency tracker powered by the VeloquentPHP BaaS. It's designed for a high-contrast, distraction-free way to log purely physical progress.
+
+## Features
+
+- Daily Log: Track your sleep duration, mood, meals, and workouts in a single streamlined view.
+- Meal Tracking: Log calories, protein, and take photos of your meals. Leverage AI to fill the estimated calories and protein based on the image. (soon)
+- Workout Tracking: Log your exercise, sets and reps.
+
+## Tech Stack
+
+- Framework: Flutter
+- Backend: Veloquent
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+### Prerequisites
+- Flutter SDK (latest stable)
+- Android Studio / VS Code
+- An active Veloquent backend instance
 
-A few resources to get you started if this is your first Flutter project:
+### Installation
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/your-username/monolog.git
+   cd monolog
+   ```
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+2. Install dependencies:
+   ```bash
+   flutter pub get
+   ```
+
+3. Configure the backend:
+   Edit lib/config.dart to point to your Veloquent API URL.
+
+4. Generate App Icons:
+   ```bash
+   dart run flutter_launcher_icons
+   ```
+
+5. Run the app:
+   ```bash
+   flutter run
+   ```
