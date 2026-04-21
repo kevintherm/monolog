@@ -143,6 +143,14 @@ class _HomePageState extends State<HomePage> {
 
                       const WorkoutSection(),
                       Gap.xxxl,
+
+                      Center(
+                        child: Text(
+                          'LOGGED IN AS ${VeloquentService.instance.currentUser?['name']?.toString().toUpperCase() ?? 'USER'}',
+                          style: MonoText.labelSm.copyWith(color: MonoColors.textMuted),
+                        ),
+                      ),
+                      Gap.xl,
                     ]),
                   ),
                 ),

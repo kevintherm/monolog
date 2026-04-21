@@ -15,6 +15,7 @@ class VeloquentService {
   }
 
   late Veloquent sdk;
+  Map<String, dynamic>? currentUser;
 
   Future<void> init() async {
     http.Client? client;
@@ -30,11 +31,15 @@ class VeloquentService {
   }
 
   Future<Map<String, dynamic>> login(String email, String password) async {
-    return await sdk.auth.login(AppConfig.usersCollection, email, password);
+    final result = await sdk.auth.login(AppConfig.usersCollection, email, password);
+    currentUser = Map<String, dynamic>.from(result['record'] ?? {});
+    return result;
   }
 
   Future<Map<String, dynamic>> me() async {
-    return await sdk.auth.me(AppConfig.usersCollection);
+    final result = await sdk.auth.me(AppConfig.usersCollection);
+    currentUser = Map<String, dynamic>.from(result);
+    return currentUser!;
   }
 
   Future<dynamic> register(String name, String email, String password) async {
@@ -49,6 +54,7 @@ class VeloquentService {
   Future<void> logout() async {
     try {
       await sdk.auth.logout(AppConfig.usersCollection);
+      currentUser = null;
     } catch (e) {
       debugPrint('Logout error (handled): $e');
     }
@@ -56,9 +62,11 @@ class VeloquentService {
 
   Future<bool> hasSession() async {
     try {
-      await sdk.auth.me(AppConfig.usersCollection);
+      final result = await sdk.auth.me(AppConfig.usersCollection);
+      currentUser = Map<String, dynamic>.from(result);
       return true;
     } catch (_) {
+      currentUser = null;
       return false;
     }
   }
