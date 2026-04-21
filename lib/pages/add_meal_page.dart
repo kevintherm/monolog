@@ -1,5 +1,7 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import '../providers/day_provider.dart';
 import '../theme/brutalist_theme.dart';
@@ -15,7 +17,10 @@ class AddMealPage extends StatefulWidget {
 class _AddMealPageState extends State<AddMealPage> {
   String? _selectedName;
   final _caloriesController = TextEditingController();
+  final _proteinController = TextEditingController();
   final _customNameController = TextEditingController();
+  final _picker = ImagePicker();
+  XFile? _imageFile;
   bool _saving = false;
   bool _useCustomName = false;
 
@@ -29,19 +34,39 @@ class _AddMealPageState extends State<AddMealPage> {
   @override
   void dispose() {
     _caloriesController.dispose();
+    _proteinController.dispose();
     _customNameController.dispose();
     super.dispose();
+  }
+
+  Future<void> _pickImage(ImageSource source) async {
+    final pickedFile = await _picker.pickImage(
+      source: source,
+      maxWidth: 1024,
+      maxHeight: 1024,
+      imageQuality: 85,
+    );
+    if (pickedFile != null) {
+      setState(() => _imageFile = pickedFile);
+    }
   }
 
   Future<void> _save() async {
     final name = _useCustomName ? _customNameController.text.trim() : _selectedName;
     final calories = int.tryParse(_caloriesController.text);
+    final protein = int.tryParse(_proteinController.text);
 
-    if (name == null || name.isEmpty || calories == null) return;
+    if (name == null || name.isEmpty || calories == null || protein == null || _imageFile == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please fill all fields and pick a photo')),
+      );
+      return;
+    }
 
     setState(() => _saving = true);
-    await context.read<DayProvider>().addMeal(name, calories);
-    if (mounted) Navigator.pop(context);
+    final success = await context.read<DayProvider>().addMeal(name, calories, protein, _imageFile!);
+    setState(() => _saving = false);
+    if (success && mounted) Navigator.pop(context);
   }
 
   @override
@@ -165,25 +190,118 @@ class _AddMealPageState extends State<AddMealPage> {
                       ),
                     ),
                     Gap.xl,
-
-                    Text('CALORIES', style: MonoText.label.copyWith(color: MonoColors.textSecondary)),
+                    Text('MEAL PHOTO', style: MonoText.label.copyWith(color: MonoColors.textSecondary)),
                     Gap.md,
-                    Container(
-                      decoration: MonoDecor.card(),
-                      padding: MonoDecor.cardPadding,
-                      child: TextField(
-                        controller: _caloriesController,
-                        keyboardType: TextInputType.number,
-                        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                        style: MonoText.number,
-                        textAlign: TextAlign.center,
-                        decoration: InputDecoration(
-                          hintText: '0',
-                          hintStyle: MonoText.number.copyWith(color: MonoColors.textMuted),
-                          suffixText: 'CAL',
-                          suffixStyle: MonoText.label.copyWith(color: MonoColors.textSecondary),
+                    GestureDetector(
+                      onTap: () async {
+                        final source = await showModalBottomSheet<ImageSource>(
+                          context: context,
+                          backgroundColor: MonoColors.surface,
+                          shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.zero,
+                          ),
+                          builder: (context) => SafeArea(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: MonoSpacing.md),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  ListTile(
+                                    leading: const Icon(Icons.camera_alt, color: MonoColors.amber),
+                                    title: Text('TAKE PHOTO', style: MonoText.label),
+                                    onTap: () => Navigator.pop(context, ImageSource.camera),
+                                  ),
+                                  ListTile(
+                                    leading: const Icon(Icons.photo_library, color: MonoColors.amber),
+                                    title: Text('CHOOSE FROM GALLERY', style: MonoText.label),
+                                    onTap: () => Navigator.pop(context, ImageSource.gallery),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        );
+                        if (source != null) _pickImage(source);
+                      },
+                      child: Container(
+                        width: double.infinity,
+                        height: 200,
+                        decoration: MonoDecor.card(
+                          color: MonoColors.surfaceHigh,
                         ),
+                        child: _imageFile != null
+                            ? Image.file(
+                                File(_imageFile!.path),
+                                fit: BoxFit.cover,
+                              )
+                            : Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  const Icon(Icons.add_a_photo_outlined, color: MonoColors.textMuted, size: 40),
+                                  Gap.sm,
+                                  Text('TAP TO UPLOAD PHOTO', style: MonoText.labelSm.copyWith(color: MonoColors.textMuted)),
+                                ],
+                              ),
                       ),
+                    ),
+                    Gap.xl,
+
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('CALORIES', style: MonoText.label.copyWith(color: MonoColors.textSecondary)),
+                              Gap.md,
+                              Container(
+                                decoration: MonoDecor.card(),
+                                padding: MonoDecor.cardPadding,
+                                child: TextField(
+                                  controller: _caloriesController,
+                                  keyboardType: TextInputType.number,
+                                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                                  style: MonoText.numberSm,
+                                  textAlign: TextAlign.center,
+                                  decoration: InputDecoration(
+                                    hintText: '0',
+                                    hintStyle: MonoText.numberSm.copyWith(color: MonoColors.textMuted),
+                                    suffixText: 'CAL',
+                                    suffixStyle: MonoText.labelSm.copyWith(color: MonoColors.textSecondary),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        Gap.hBase,
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('PROTEIN', style: MonoText.label.copyWith(color: MonoColors.textSecondary)),
+                              Gap.md,
+                              Container(
+                                decoration: MonoDecor.card(),
+                                padding: MonoDecor.cardPadding,
+                                child: TextField(
+                                  controller: _proteinController,
+                                  keyboardType: TextInputType.number,
+                                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                                  style: MonoText.numberSm,
+                                  textAlign: TextAlign.center,
+                                  decoration: InputDecoration(
+                                    hintText: '0',
+                                    hintStyle: MonoText.numberSm.copyWith(color: MonoColors.textMuted),
+                                    suffixText: 'G',
+                                    suffixStyle: MonoText.labelSm.copyWith(color: MonoColors.textSecondary),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
                     ),
                     Gap.xxl,
 

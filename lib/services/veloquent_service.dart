@@ -1,4 +1,7 @@
+import 'dart:convert';
+import 'dart:io';
 import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
 import 'package:veloquent_sdk/veloquent_sdk.dart';
 import '../config.dart';
 
@@ -13,9 +16,14 @@ class VeloquentService {
   late Veloquent sdk;
 
   Future<void> init() async {
+    http.Client? client;
+    if (!kIsWeb && Platform.isAndroid) {
+      client = _HostHeaderClient(AppConfig.domain);
+    }
+
     sdk = Veloquent(
       apiUrl: AppConfig.apiUrl,
-      http: createFetchAdapter(),
+      http: _HeaderAwareFetchAdapter(client: client),
       storage: await createLocalStorageAdapter(),
     );
   }
@@ -52,5 +60,64 @@ class VeloquentService {
     } catch (_) {
       return false;
     }
+  }
+}
+
+class _HeaderAwareFetchAdapter extends FetchAdapter {
+  final http.Client _customClient;
+
+  _HeaderAwareFetchAdapter({super.client}) 
+    : _customClient = client ?? http.Client();
+
+  @override
+  Future<HttpResponse> sendMultipartRequest({
+    required String method,
+    required Uri uri,
+    required http.MultipartRequest multipartRequest,
+    required Map<String, String> fields,
+    required List<Map<String, dynamic>> files,
+    required Map<String, String> headers,
+    required Duration timeout,
+  }) async {
+    final streamedResponse = await _customClient.send(multipartRequest).timeout(timeout);
+    final response = await http.Response.fromStream(streamedResponse);
+    
+    final contentType = response.headers['content-type'] ?? '';
+    dynamic data;
+    if (contentType.contains('application/json') && response.body.isNotEmpty) {
+      try {
+        data = jsonDecode(response.body);
+      } on FormatException {
+        data = response.body;
+      }
+    } else if (response.body.isNotEmpty) {
+      data = response.body;
+    }
+
+    return HttpResponse(
+      status: response.statusCode,
+      statusText: response.reasonPhrase ?? '',
+      headers: response.headers,
+      data: data,
+    );
+  }
+}
+
+class _HostHeaderClient extends http.BaseClient {
+  final http.Client _inner = http.Client();
+  final String host;
+
+  _HostHeaderClient(this.host);
+
+  @override
+  Future<http.StreamedResponse> send(http.BaseRequest request) {
+    request.headers['Host'] = host;
+    return _inner.send(request);
+  }
+
+  @override
+  void close() {
+    _inner.close();
+    super.close();
   }
 }

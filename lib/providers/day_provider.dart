@@ -1,6 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
+import 'package:mime/mime.dart';
+import 'package:veloquent_sdk/veloquent_sdk.dart';
 import '../config.dart';
 import '../models/day.dart';
 import '../models/meal.dart';
@@ -113,20 +116,30 @@ class DayProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> addMeal(String name, int calories) async {
-    if (_today == null) return;
+  Future<bool> addMeal(String name, int calories, int protein, XFile imageFile) async {
+    if (_today == null) return false;
     try {
+      final upload = FileUpload(
+        bytes: await imageFile.readAsBytes(),
+        filename: imageFile.name,
+        mimeType: lookupMimeType(imageFile.name) ?? 'application/octet-stream',
+      );
+
       await _service.sdk.records.create(AppConfig.mealsCollection, {
         'day': _today!.id,
         'name': name,
         'calories': calories,
+        'protein': protein,
+        'image': upload,
         'user': _userId,
       });
       await _loadMeals();
       notifyListeners();
+      return true;
     } catch (e) {
       _error = e.toString();
       notifyListeners();
+      return false;
     }
   }
 

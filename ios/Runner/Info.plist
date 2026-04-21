@@ -66,5 +66,9 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>NSCameraUsageDescription</key>
+	<string>MonoLog needs camera access to let you take photos of your meals.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>MonoLog needs gallery access to let you upload photos of your meals.</string>
 </dict>
 </plist>
