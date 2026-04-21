@@ -54,9 +54,9 @@ class _HomePageState extends State<HomePage> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(
-                                  'MONOLOG',
-                                  style: MonoText.display.copyWith(color: MonoColors.amber),
+                                Image.asset(
+                                  'assets/logo-sm.png',
+                                  height: 32,
                                 ),
                                 Gap.xs,
                                 Text(

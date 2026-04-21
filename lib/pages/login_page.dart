@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:veloquent_sdk/veloquent_sdk.dart';
 import '../services/veloquent_service.dart';
 import '../theme/brutalist_theme.dart';
 import '../widgets/brutalist_button.dart';
@@ -15,29 +16,22 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
   final _passwordController = TextEditingController();
   bool _loading = false;
   String? _error;
-  late AnimationController _shakeController;
 
   @override
   void initState() {
     super.initState();
-    _shakeController = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 400),
-    );
   }
 
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
-    _shakeController.dispose();
     super.dispose();
   }
 
   Future<void> _login() async {
     if (_emailController.text.isEmpty || _passwordController.text.isEmpty) {
       setState(() => _error = 'Please fill in all fields');
-      _shakeController.forward(from: 0);
       return;
     }
 
@@ -54,9 +48,10 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
       if (mounted) {
         Navigator.pushReplacementNamed(context, '/home');
       }
+    } on SdkError catch (e) {
+      setState(() => _error = e.message);
     } catch (e) {
-      setState(() => _error = 'Invalid credentials');
-      _shakeController.forward(from: 0);
+      setState(() => _error = 'An unexpected error occurred');
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -72,17 +67,9 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Container(
-                  padding: const EdgeInsets.all(MonoSpacing.xl),
-                  decoration: MonoDecor.tile(MonoColors.amber),
-                  child: Text(
-                    'MONO\nLOG',
-                    textAlign: TextAlign.center,
-                    style: MonoText.displayLg.copyWith(
-                      color: Colors.black,
-                      height: 1.1,
-                    ),
-                  ),
+                Image.asset(
+                  'assets/logo.png',
+                  width: 240,
                 ),
                 Gap.lg,
                 Text(
@@ -92,28 +79,14 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                 Gap.xxxl,
 
                 if (_error != null) ...[
-                  AnimatedBuilder(
-                    animation: _shakeController,
-                    builder: (context, child) {
-                      final offset = _shakeController.isAnimating
-                          ? 10.0 *
-                              (0.5 - _shakeController.value).abs() *
-                              (_shakeController.value < 0.5 ? 1 : -1)
-                          : 0.0;
-                      return Transform.translate(
-                        offset: Offset(offset, 0),
-                        child: child,
-                      );
-                    },
-                    child: Container(
-                      width: double.infinity,
-                      padding: MonoDecor.cardPadding,
-                      decoration: MonoDecor.card(borderColor: MonoColors.danger),
-                      child: Text(
-                        _error!,
-                        style: MonoText.body.copyWith(color: MonoColors.danger),
-                        textAlign: TextAlign.center,
-                      ),
+                  Container(
+                    width: double.infinity,
+                    padding: MonoDecor.cardPadding,
+                    decoration: MonoDecor.card(borderColor: MonoColors.danger),
+                    child: Text(
+                      _error!,
+                      style: MonoText.body.copyWith(color: MonoColors.danger),
+                      textAlign: TextAlign.center,
                     ),
                   ),
                   Gap.lg,
