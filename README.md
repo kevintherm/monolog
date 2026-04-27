@@ -5,7 +5,7 @@
 
 # MonoLog
 
-MonoLog is an opinionated minimalist daily consistency tracker powered by the VeloquentPHP BaaS. It's designed for a high-contrast, distraction-free way to log purely physical progress.
+MonoLog is an opinionated minimalist daily consistency tracker app. It's designed for a high-contrast, distraction-free way to log purely physical progress.
 
 ## Features
 
