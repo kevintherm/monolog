@@ -119,6 +119,7 @@ class DayProvider extends ChangeNotifier {
   Future<void> updateSleepHours(double hours) async {
     if (_today == null) return;
     try {
+      debugPrint('Updating sleep hours to: $hours');
       final updated = await _service.sdk.records.update(
         AppConfig.daysCollection,
         _today!.id,
@@ -148,7 +149,12 @@ class DayProvider extends ChangeNotifier {
     }
   }
 
-  Future<bool> addMeal(String name, int calories, int protein, XFile imageFile) async {
+  Future<bool> addMeal(
+    String name,
+    int calories,
+    int protein,
+    XFile imageFile,
+  ) async {
     if (_today == null) return false;
     try {
       final upload = FileUpload(
@@ -203,11 +209,16 @@ class DayProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> updateWorkoutSets(String workoutId, List<ExerciseSet> sets) async {
+  Future<void> updateWorkoutSets(
+    String workoutId,
+    List<ExerciseSet> sets,
+  ) async {
     try {
-      await _service.sdk.records.update(AppConfig.workoutsCollection, workoutId, {
-        'sets': jsonEncode(sets.map((s) => s.toMap()).toList()),
-      });
+      await _service.sdk.records.update(
+        AppConfig.workoutsCollection,
+        workoutId,
+        {'sets': jsonEncode(sets.map((s) => s.toMap()).toList())},
+      );
       await _loadWorkouts();
       notifyListeners();
     } catch (e) {
@@ -218,7 +229,10 @@ class DayProvider extends ChangeNotifier {
 
   Future<void> deleteWorkout(String workoutId) async {
     try {
-      await _service.sdk.records.delete(AppConfig.workoutsCollection, workoutId);
+      await _service.sdk.records.delete(
+        AppConfig.workoutsCollection,
+        workoutId,
+      );
       _workouts.removeWhere((w) => w.id == workoutId);
       notifyListeners();
     } catch (e) {

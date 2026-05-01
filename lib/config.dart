@@ -6,7 +6,7 @@ class AppConfig {
 
   static const String env = "production"; // local, production
 
-  static const String domain = 'localhost';
+  static const String domain = 'chantal-strawless-ulcerously.ngrok-free.dev';
 
   static String get apiUrl {
     if (!kIsWeb && Platform.isAndroid && env == "local") {

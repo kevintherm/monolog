@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/day_provider.dart';
@@ -12,24 +13,36 @@ class SleepInput extends StatefulWidget {
 }
 
 class _SleepInputState extends State<SleepInput> {
-  late TextEditingController _controller;
+  double? _localHours;
+  Timer? _debounceTimer;
 
-  @override
-  void initState() {
-    super.initState();
-    _controller = TextEditingController();
+  void _onHoursChanged(double newHours) {
+    setState(() {
+      _localHours = newHours;
+    });
+
+    _debounceTimer?.cancel();
+    _debounceTimer = Timer(const Duration(milliseconds: 500), () {
+      if (mounted && _localHours != null) {
+        context.read<DayProvider>().updateSleepHours(_localHours!);
+      }
+    });
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _debounceTimer?.cancel();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<DayProvider>();
-    final hours = provider.today?.sleepHours;
+    final serverHours = provider.today?.sleepHours;
+
+    final hours = (_debounceTimer?.isActive ?? false)
+        ? (_localHours ?? serverHours)
+        : serverHours;
 
     return Container(
       decoration: MonoDecor.card(),
@@ -39,9 +52,16 @@ class _SleepInputState extends State<SleepInput> {
         children: [
           Row(
             children: [
-              const Icon(Icons.bedtime_outlined, color: MonoColors.amber, size: 22),
+              const Icon(
+                Icons.bedtime_outlined,
+                color: MonoColors.amber,
+                size: 22,
+              ),
               Gap.hSm,
-              Text('SLEEP', style: MonoText.label.copyWith(color: MonoColors.amber)),
+              Text(
+                'SLEEP',
+                style: MonoText.label.copyWith(color: MonoColors.amber),
+              ),
             ],
           ),
           Gap.md,
@@ -51,9 +71,11 @@ class _SleepInputState extends State<SleepInput> {
                 _LargeStepperButton(
                   icon: Icons.remove,
                   onPressed: () {
-                    final current = hours ?? 0;
+                    final current = hours ?? 0.0;
                     if (current > 0) {
-                      provider.updateSleepHours((current - 0.5).clamp(0, 24));
+                      _onHoursChanged(
+                        (current - 0.5).clamp(0.0, double.infinity),
+                      );
                     }
                   },
                 ),
@@ -72,7 +94,9 @@ class _SleepInputState extends State<SleepInput> {
                     ),
                     Text(
                       'HOURS',
-                      style: MonoText.labelSm.copyWith(color: MonoColors.textSecondary),
+                      style: MonoText.labelSm.copyWith(
+                        color: MonoColors.textSecondary,
+                      ),
                     ),
                   ],
                 ),
@@ -81,10 +105,10 @@ class _SleepInputState extends State<SleepInput> {
                 _LargeStepperButton(
                   icon: Icons.add,
                   onPressed: () {
-                    final current = hours ?? 0;
-                    if (current < 24) {
-                      provider.updateSleepHours((current + 0.5).clamp(0, 24));
-                    }
+                    final current = hours ?? 0.0;
+                    _onHoursChanged(
+                      (current + 0.5).clamp(0.0, double.infinity),
+                    );
                   },
                 ),
             ],
@@ -95,24 +119,56 @@ class _SleepInputState extends State<SleepInput> {
   }
 }
 
-class _LargeStepperButton extends StatelessWidget {
+class _LargeStepperButton extends StatefulWidget {
   final IconData icon;
   final VoidCallback onPressed;
 
   const _LargeStepperButton({required this.icon, required this.onPressed});
 
   @override
+  State<_LargeStepperButton> createState() => _LargeStepperButtonState();
+}
+
+class _LargeStepperButtonState extends State<_LargeStepperButton> {
+  Timer? _timer;
+
+  void _startTimer() {
+    _timer?.cancel();
+    _timer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
+      widget.onPressed();
+    });
+  }
+
+  void _stopTimer() {
+    _timer?.cancel();
+    _timer = null;
+  }
+
+  @override
+  void dispose() {
+    _stopTimer();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onPressed,
-      child: Container(
-        width: 60,
-        height: 60,
-        decoration: BoxDecoration(
-          color: MonoColors.surfaceHigh,
-          border: Border.all(color: MonoColors.amber, width: 2),
+    return Material(
+      color: MonoColors.surfaceHigh,
+      child: GestureDetector(
+        onLongPressStart: (_) => _startTimer(),
+        onLongPressEnd: (_) => _stopTimer(),
+        onLongPressCancel: () => _stopTimer(),
+        child: InkWell(
+          onTap: widget.onPressed,
+          child: Container(
+            width: 60,
+            height: 60,
+            decoration: BoxDecoration(
+              border: Border.all(color: MonoColors.amber, width: 2),
+            ),
+            child: Icon(widget.icon, color: MonoColors.amber, size: 28),
+          ),
         ),
-        child: Icon(icon, color: MonoColors.amber, size: 28),
       ),
     );
   }
