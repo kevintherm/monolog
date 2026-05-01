@@ -27,7 +27,7 @@ class MonoLogApp extends StatelessWidget {
     return ChangeNotifierProvider(
       create: (_) => DayProvider(),
       child: MaterialApp(
-        title: 'MonoLog',
+        title: 'Monolog',
         debugShowCheckedModeBanner: false,
         theme: buildMonoLogTheme(),
         initialRoute: '/login',
