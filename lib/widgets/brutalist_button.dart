@@ -9,24 +9,26 @@ enum BrutalistButtonVariant {
 }
 
 class BrutalistButton extends StatefulWidget {
-  final String label;
+  final String? label;
   final VoidCallback onPressed;
   final BrutalistButtonVariant variant;
   final Color? color;
   final Color? textColor;
   final IconData? icon;
+  final Widget? iconWidget;
   final bool fullWidth;
   final bool small;
   final bool isLoading;
 
   const BrutalistButton({
     super.key,
-    required this.label,
+    this.label,
     required this.onPressed,
     this.variant = BrutalistButtonVariant.primary,
     this.color,
     this.textColor,
     this.icon,
+    this.iconWidget,
     this.fullWidth = false,
     this.small = false,
     this.isLoading = false,
@@ -136,15 +138,21 @@ class _BrutalistButtonState extends State<BrutalistButton> with SingleTickerProv
                 ),
               )
             else ...[
-              if (widget.icon != null) ...[
+              if (widget.iconWidget != null) ...[
+                widget.iconWidget!,
+                Gap.hSm,
+              ] else if (widget.icon != null) ...[
                 Icon(widget.icon, color: fgColor, size: widget.small ? 18 : 22),
                 Gap.hSm,
               ],
-              Text(
-                widget.label.toUpperCase(),
-                style: (widget.small ? MonoText.label : MonoText.labelLg)
-                    .copyWith(color: fgColor),
-              ),
+              if (widget.label != null && widget.label!.isNotEmpty) ...[
+                if (widget.iconWidget != null || widget.icon != null) Gap.hSm,
+                Text(
+                  widget.label!.toUpperCase(),
+                  style: (widget.small ? MonoText.label : MonoText.labelLg)
+                      .copyWith(color: fgColor),
+                ),
+              ],
             ],
           ],
         ),

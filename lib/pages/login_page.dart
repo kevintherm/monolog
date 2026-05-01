@@ -157,19 +157,35 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                 ),
                 Gap.xxl,
 
-                BrutalistButton(
+                 BrutalistButton(
                   label: 'Login',
                   onPressed: _login,
                   fullWidth: true,
                   isLoading: _loading,
                 ),
-                Gap.base,
+                Gap.xl,
+                Row(
+                  children: [
+                    const Expanded(child: Divider(color: MonoColors.border, thickness: 2)),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: MonoSpacing.md),
+                      child: Text(
+                        'OR',
+                        style: MonoText.labelSm.copyWith(color: MonoColors.textMuted),
+                      ),
+                    ),
+                    const Expanded(child: Divider(color: MonoColors.border, thickness: 2)),
+                  ],
+                ),
+                Gap.xl,
                 BrutalistButton(
-                  label: 'Sign in with Google',
                   onPressed: _loginWithGoogle,
-                  fullWidth: true,
+                  fullWidth: false,
                   variant: BrutalistButtonVariant.tonal,
-                  icon: Icons.login,
+                  iconWidget: Image.asset(
+                    'assets/google-logo.png',
+                    height: 22,
+                  ),
                   isLoading: _loading,
                 ),
                 Gap.xl,

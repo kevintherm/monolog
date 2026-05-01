@@ -52,7 +52,7 @@ class DayProvider extends ChangeNotifier {
       } else {
         final created = await _service.sdk.records.create(
           AppConfig.daysCollection,
-          {'date': dateStr, 'user': _userId},
+          {'date': dateStr, 'user': _userId, 'sleep_hours': 5.0},
         );
         _today = Day.fromRecord(created);
       }

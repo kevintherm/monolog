@@ -4,6 +4,7 @@ class Day {
   final double? sleepHours;
   final int? mood;
   final String user;
+  final DateTime updatedAt;
 
   Day({
     required this.id,
@@ -11,6 +12,7 @@ class Day {
     this.sleepHours,
     this.mood,
     required this.user,
+    required this.updatedAt,
   });
 
   DateTime get dateTime => DateTime.parse(date);
@@ -22,6 +24,7 @@ class Day {
       sleepHours: (record.get('sleep_hours') as num?)?.toDouble(),
       mood: (record.get('mood') as num?)?.toInt(),
       user: record.get('user') as String,
+      updatedAt: DateTime.parse(record.get('updated_at') as String),
     );
   }
 }

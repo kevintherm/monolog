@@ -104,7 +104,7 @@ class _HistoryDayDetailPageState extends State<HistoryDayDetailPage> {
                           Gap.xxl,
                           Center(
                             child: Text(
-                              'LOGGED ON ${DateFormat('MMM dd HH:mm').format(widget.day.dateTime)}',
+                              'LOGGED ON ${DateFormat('MMM dd HH:mm').format(widget.day.updatedAt)}',
                               style: MonoText.labelSm.copyWith(color: MonoColors.textMuted),
                             ),
                           ),

@@ -71,7 +71,7 @@ class _SleepInputState extends State<SleepInput> {
                 _LargeStepperButton(
                   icon: Icons.remove,
                   onPressed: () {
-                    final current = hours ?? 0.0;
+                    final current = hours ?? 5.0;
                     if (current > 0) {
                       _onHoursChanged(
                         (current - 0.5).clamp(0.0, double.infinity),
@@ -84,10 +84,10 @@ class _SleepInputState extends State<SleepInput> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      hours != null ? hours.toStringAsFixed(1) : '—',
+                      (hours ?? 5.0).toStringAsFixed(1),
                       style: MonoText.number.copyWith(
                         fontSize: 32,
-                        color: hours != null
+                        color: hours != null || (_debounceTimer?.isActive ?? false)
                             ? MonoColors.textPrimary
                             : MonoColors.textMuted,
                       ),
@@ -105,7 +105,7 @@ class _SleepInputState extends State<SleepInput> {
                 _LargeStepperButton(
                   icon: Icons.add,
                   onPressed: () {
-                    final current = hours ?? 0.0;
+                    final current = hours ?? 5.0;
                     _onHoursChanged(
                       (current + 0.5).clamp(0.0, double.infinity),
                     );
