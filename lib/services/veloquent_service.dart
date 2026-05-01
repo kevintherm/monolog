@@ -107,6 +107,31 @@ class VeloquentService {
     });
   }
 
+  Future<void> updateProfile({
+    required String name,
+    String? email,
+    String? password,
+  }) async {
+    if (currentUser == null) throw Exception('No user logged in');
+
+    final data = <String, dynamic>{
+      'name': name,
+    };
+
+    if (email != null && email.isNotEmpty) {
+      data['email'] = email;
+    }
+
+    if (password != null && password.isNotEmpty) {
+      data['password'] = password;
+      data['password_confirmation'] = password;
+    }
+
+    final id = currentUser!['id'].toString();
+    await sdk.records.update(AppConfig.usersCollection, id, data);
+    await me();
+  }
+
   Future<void> logout() async {
     try {
       await sdk.auth.logout(AppConfig.usersCollection);
@@ -125,6 +150,13 @@ class VeloquentService {
       currentUser = null;
       return false;
     }
+  }
+
+  static String formatError(dynamic e) {
+    if (e is SdkError) {
+      return e.message;
+    }
+    return e.toString().replaceFirst('Exception: ', '');
   }
 }
 

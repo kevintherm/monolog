@@ -8,7 +8,6 @@ import '../widgets/sleep_input.dart';
 import '../widgets/meal_section.dart';
 import '../widgets/workout_section.dart';
 import '../widgets/mood_input.dart';
-import '../widgets/confirm_bottom_sheet.dart';
 import '../widgets/skeleton.dart';
 
 class HomePage extends StatefulWidget {
@@ -84,29 +83,15 @@ class _HomePageState extends State<HomePage> {
                           ),
                           Gap.hSm,
                           GestureDetector(
-                            onTap: () async {
-                              final confirmed = await ConfirmBottomSheet.show(
-                                context,
-                                title: 'LOGOUT',
-                                message: 'Are you sure you want to end your session?',
-                                confirmLabel: 'LOGOUT',
-                              );
-
-                              if (confirmed == true && context.mounted) {
-                                await VeloquentService.instance.logout();
-                                if (context.mounted) {
-                                  Navigator.pushReplacementNamed(context, '/login');
-                                }
-                              }
-                            },
+                            onTap: () => Navigator.pushNamed(context, '/profile'),
                             child: Container(
                               padding: const EdgeInsets.all(MonoSpacing.sm),
                               decoration: BoxDecoration(
                                 border: Border.all(color: MonoColors.border, width: 2),
                               ),
                               child: const Icon(
-                                Icons.logout,
-                                color: MonoColors.textSecondary,
+                                Icons.person_outline,
+                                color: MonoColors.amber,
                                 size: 22,
                               ),
                             ),

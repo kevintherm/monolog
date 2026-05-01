@@ -10,6 +10,7 @@ import 'pages/add_meal_page.dart';
 import 'pages/exercise_detail_page.dart';
 import 'pages/history_page.dart';
 import 'pages/history_day_detail_page.dart';
+import 'pages/profile_page.dart';
 import 'models/day.dart';
 
 void main() async {
@@ -54,6 +55,9 @@ class MonoLogApp extends StatelessWidget {
             case '/history-detail':
               final day = settings.arguments as Day;
               page = HistoryDayDetailPage(day: day);
+              break;
+            case '/profile':
+              page = const ProfilePage();
               break;
             default:
               page = const LoginPage();

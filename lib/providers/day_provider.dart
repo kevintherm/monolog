@@ -59,7 +59,7 @@ class DayProvider extends ChangeNotifier {
 
       await Future.wait([_loadMeals(), _loadWorkouts()]);
     } catch (e) {
-      _error = e.toString();
+      _error = VeloquentService.formatError(e);
     } finally {
       _loading = false;
       notifyListeners();
@@ -77,7 +77,7 @@ class DayProvider extends ChangeNotifier {
       );
       return result.data.map((r) => Day.fromRecord(r)).toList();
     } catch (e) {
-      _error = e.toString();
+      _error = VeloquentService.formatError(e);
       return [];
     }
   }
@@ -91,7 +91,7 @@ class DayProvider extends ChangeNotifier {
     try {
       await Future.wait([_loadMeals(), _loadWorkouts()]);
     } catch (e) {
-      _error = e.toString();
+      _error = VeloquentService.formatError(e);
     } finally {
       _loading = false;
       notifyListeners();
@@ -128,7 +128,7 @@ class DayProvider extends ChangeNotifier {
       _today = Day.fromRecord(updated);
       notifyListeners();
     } catch (e) {
-      _error = e.toString();
+      _error = VeloquentService.formatError(e);
       notifyListeners();
     }
   }
@@ -144,7 +144,7 @@ class DayProvider extends ChangeNotifier {
       _today = Day.fromRecord(updated);
       notifyListeners();
     } catch (e) {
-      _error = e.toString();
+      _error = VeloquentService.formatError(e);
       notifyListeners();
     }
   }
@@ -175,7 +175,7 @@ class DayProvider extends ChangeNotifier {
       notifyListeners();
       return true;
     } catch (e) {
-      _error = e.toString();
+      _error = VeloquentService.formatError(e);
       notifyListeners();
       return false;
     }
@@ -187,7 +187,7 @@ class DayProvider extends ChangeNotifier {
       _meals.removeWhere((m) => m.id == mealId);
       notifyListeners();
     } catch (e) {
-      _error = e.toString();
+      _error = VeloquentService.formatError(e);
       notifyListeners();
     }
   }
@@ -204,7 +204,7 @@ class DayProvider extends ChangeNotifier {
       await _loadWorkouts();
       notifyListeners();
     } catch (e) {
-      _error = e.toString();
+      _error = VeloquentService.formatError(e);
       notifyListeners();
     }
   }
@@ -222,7 +222,7 @@ class DayProvider extends ChangeNotifier {
       await _loadWorkouts();
       notifyListeners();
     } catch (e) {
-      _error = e.toString();
+      _error = VeloquentService.formatError(e);
       notifyListeners();
     }
   }
@@ -236,7 +236,7 @@ class DayProvider extends ChangeNotifier {
       _workouts.removeWhere((w) => w.id == workoutId);
       notifyListeners();
     } catch (e) {
-      _error = e.toString();
+      _error = VeloquentService.formatError(e);
       notifyListeners();
     }
   }

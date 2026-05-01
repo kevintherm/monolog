@@ -50,11 +50,11 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
       }
     } on SdkError catch (e) {
       debugPrint('SDK Error: ${e.message} (Code: ${e.code})');
-      setState(() => _error = e.message);
+      setState(() => _error = VeloquentService.formatError(e));
     } catch (e, stack) {
       debugPrint('Unexpected Login Error: $e');
       debugPrint('Stack Trace: $stack');
-      setState(() => _error = 'An unexpected error occurred');
+      setState(() => _error = VeloquentService.formatError(e));
     } finally {
       if (mounted) setState(() => _loading = false);
     }

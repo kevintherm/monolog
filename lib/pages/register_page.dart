@@ -60,11 +60,11 @@ class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderSt
       }
     } on SdkError catch (e) {
       debugPrint('SDK Error (Register): ${e.message} (Code: ${e.code})');
-      setState(() => _error = e.message);
+      setState(() => _error = VeloquentService.formatError(e));
     } catch (e, stack) {
       debugPrint('Unexpected Register Error: $e');
       debugPrint('Stack Trace: $stack');
-      setState(() => _error = 'An unexpected error occurred');
+      setState(() => _error = VeloquentService.formatError(e));
     } finally {
       if (mounted) setState(() => _loading = false);
     }
