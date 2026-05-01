@@ -49,9 +49,31 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
         Navigator.pushReplacementNamed(context, '/home');
       }
     } on SdkError catch (e) {
+      debugPrint('SDK Error: ${e.message} (Code: ${e.code})');
       setState(() => _error = e.message);
-    } catch (e) {
+    } catch (e, stack) {
+      debugPrint('Unexpected Login Error: $e');
+      debugPrint('Stack Trace: $stack');
       setState(() => _error = 'An unexpected error occurred');
+    } finally {
+      if (mounted) setState(() => _loading = false);
+    }
+  }
+
+  Future<void> _loginWithGoogle() async {
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
+
+    try {
+      await VeloquentService.instance.loginWithGoogleNative();
+      if (mounted) {
+        Navigator.pushReplacementNamed(context, '/home');
+      }
+    } catch (e) {
+      debugPrint('Google login error: $e');
+      setState(() => _error = 'Google login failed. Please try again.');
     } finally {
       if (mounted) setState(() => _loading = false);
     }
@@ -139,6 +161,15 @@ class _LoginPageState extends State<LoginPage> with SingleTickerProviderStateMix
                   label: 'Login',
                   onPressed: _login,
                   fullWidth: true,
+                  isLoading: _loading,
+                ),
+                Gap.base,
+                BrutalistButton(
+                  label: 'Sign in with Google',
+                  onPressed: _loginWithGoogle,
+                  fullWidth: true,
+                  variant: BrutalistButtonVariant.tonal,
+                  icon: Icons.login,
                   isLoading: _loading,
                 ),
                 Gap.xl,

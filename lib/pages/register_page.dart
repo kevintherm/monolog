@@ -59,8 +59,11 @@ class _RegisterPageState extends State<RegisterPage> with SingleTickerProviderSt
         Navigator.pushReplacementNamed(context, '/home');
       }
     } on SdkError catch (e) {
+      debugPrint('SDK Error (Register): ${e.message} (Code: ${e.code})');
       setState(() => _error = e.message);
-    } catch (e) {
+    } catch (e, stack) {
+      debugPrint('Unexpected Register Error: $e');
+      debugPrint('Stack Trace: $stack');
       setState(() => _error = 'An unexpected error occurred');
     } finally {
       if (mounted) setState(() => _loading = false);

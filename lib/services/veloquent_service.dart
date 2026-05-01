@@ -3,8 +3,8 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:veloquent_sdk/veloquent_sdk.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import '../config.dart';
-import 'secure_storage_adapter.dart';
 
 class VeloquentService {
   VeloquentService._();
@@ -26,12 +26,68 @@ class VeloquentService {
     sdk = Veloquent(
       apiUrl: AppConfig.apiUrl,
       http: _HeaderAwareFetchAdapter(client: client),
-      storage: SecureStorageAdapter(),
+      storage: createSecureStorageAdapter(),
     );
   }
 
   Future<Map<String, dynamic>> login(String email, String password) async {
-    final result = await sdk.auth.login(AppConfig.usersCollection, email, password);
+    final result = await sdk.auth.login(
+      AppConfig.usersCollection,
+      email,
+      password,
+    );
+    currentUser = Map<String, dynamic>.from(result['record'] ?? {});
+    return result;
+  }
+
+  Future<Map<String, dynamic>> loginWithGoogleNative() async {
+    final redirectUrl = await sdk.auth.getOAuthRedirectUrl(
+      AppConfig.usersCollection,
+      'google',
+    );
+    final uri = Uri.parse(redirectUrl);
+    final state = uri.queryParameters['state'];
+
+    if (state == null) {
+      throw Exception('Failed to obtain OAuth state from Veloquent.');
+    }
+
+    final googleSignIn = GoogleSignIn(
+      serverClientId: AppConfig.googleServerClientId,
+    );
+
+    final account = await googleSignIn.signIn();
+    if (account == null) {
+      throw Exception('Login cancelled');
+    }
+
+    final serverAuthCode = account.serverAuthCode;
+    if (serverAuthCode == null) {
+      throw Exception('Failed to get server auth code from Google');
+    }
+
+    // Relay the Google code and Veloquent state to the Veloquent callback endpoint.
+    final callbackResponse = await http.get(
+      Uri.parse(
+        '${AppConfig.apiUrl}/api/oauth2/callback?code=$serverAuthCode&state=$state&native=1',
+      ),
+      headers: {'Accept': 'application/json'},
+    );
+
+    if (callbackResponse.statusCode != 200) {
+      throw Exception('Veloquent callback failed: ${callbackResponse.body}');
+    }
+
+    final callbackData = jsonDecode(callbackResponse.body);
+    final data = callbackData['data'] ?? callbackData;
+    final exchangeCode = data['code'] ?? data['exchange_code'];
+
+    if (exchangeCode == null) {
+      throw Exception('No exchange code received from Veloquent');
+    }
+
+    final result = await sdk.auth.exchangeOAuthCode(exchangeCode);
+
     currentUser = Map<String, dynamic>.from(result['record'] ?? {});
     return result;
   }
@@ -75,7 +131,7 @@ class VeloquentService {
 class _HeaderAwareFetchAdapter extends FetchAdapter {
   final http.Client _customClient;
 
-  _HeaderAwareFetchAdapter({super.client}) 
+  _HeaderAwareFetchAdapter({super.client})
     : _customClient = client ?? http.Client();
 
   @override
@@ -88,9 +144,11 @@ class _HeaderAwareFetchAdapter extends FetchAdapter {
     required Map<String, String> headers,
     required Duration timeout,
   }) async {
-    final streamedResponse = await _customClient.send(multipartRequest).timeout(timeout);
+    final streamedResponse = await _customClient
+        .send(multipartRequest)
+        .timeout(timeout);
     final response = await http.Response.fromStream(streamedResponse);
-    
+
     final contentType = response.headers['content-type'] ?? '';
     dynamic data;
     if (contentType.contains('application/json') && response.body.isNotEmpty) {
