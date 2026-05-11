@@ -24,9 +24,16 @@ class MealSection extends StatelessWidget {
       children: [
         Row(
           children: [
-            const Icon(Icons.restaurant_outlined, color: MonoColors.amber, size: 22),
+            const Icon(
+              Icons.restaurant_outlined,
+              color: MonoColors.amber,
+              size: 22,
+            ),
             Gap.hSm,
-            Text('MEALS', style: MonoText.label.copyWith(color: MonoColors.amber)),
+            Text(
+              'MEALS',
+              style: MonoText.label.copyWith(color: MonoColors.amber),
+            ),
             const Spacer(),
             if (meals.isNotEmpty)
               Column(
@@ -34,11 +41,16 @@ class MealSection extends StatelessWidget {
                 children: [
                   Text(
                     '$totalCalories CAL',
-                    style: MonoText.numberSm.copyWith(color: MonoColors.textSecondary),
+                    style: MonoText.numberSm.copyWith(
+                      color: MonoColors.textSecondary,
+                    ),
                   ),
                   Text(
                     '${totalProtein}G PROTEIN',
-                    style: MonoText.labelSm.copyWith(color: MonoColors.textMuted, fontSize: 9),
+                    style: MonoText.labelSm.copyWith(
+                      color: MonoColors.textMuted,
+                      fontSize: 9,
+                    ),
                   ),
                 ],
               ),
@@ -57,102 +69,132 @@ class MealSection extends StatelessWidget {
             ),
           )
         else
-          ...meals.map((meal) => Padding(
-                padding: const EdgeInsets.only(bottom: MonoSpacing.sm),
-                child: Dismissible(
-                  key: Key(meal.id),
-                  direction: readOnly ? DismissDirection.none : DismissDirection.endToStart,
-                  confirmDismiss: (direction) async {
-                    return await ConfirmBottomSheet.show(
-                      context,
-                      title: 'DELETE MEAL',
-                      message: 'Are you sure you want to remove this meal?',
-                      confirmLabel: 'DELETE',
-                    );
-                  },
-                  background: Container(
-                    alignment: Alignment.centerRight,
-                    padding: const EdgeInsets.only(right: MonoSpacing.base),
-                    color: MonoColors.danger,
-                    child: const Icon(Icons.delete, color: Colors.white),
-                  ),
-                  onDismissed: (_) => provider.deleteMeal(meal.id),
-                    child: Container(
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(MonoSpacing.sm),
-                      decoration: MonoDecor.card(),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 60,
-                            height: 60,
-                            decoration: BoxDecoration(
-                              border: Border.all(color: MonoColors.border, width: 2),
-                              image: meal.image.isNotEmpty
-                                  ? DecorationImage(
-                                      image: NetworkImage(
-                                        () {
-                                          String url = meal.image;
-                                          if (!url.startsWith('http')) {
-                                            url = '${AppConfig.apiUrl}/api/files/${AppConfig.mealsCollection}/${meal.id}/${meal.image}';
-                                          }
-                                          if (!kIsWeb && Platform.isAndroid) {
-                                            url = url.replaceFirst('monolog.localhost', '10.0.2.2');
-                                          }
-                                          return url;
-                                        }(),
-                                        headers: {
-                                          if (!kIsWeb && Platform.isAndroid) 'Host': AppConfig.domain,
-                                        },
-                                      ),
-                                      fit: BoxFit.cover,
-                                    )
-                                  : null,
-                            ),
-                            child: meal.image.isEmpty
-                                ? const Icon(Icons.restaurant, color: MonoColors.textMuted, size: 20)
-                                : null,
+          ...meals.map(
+            (meal) => Padding(
+              padding: const EdgeInsets.only(bottom: MonoSpacing.sm),
+              child: Dismissible(
+                key: Key(meal.id),
+                direction: readOnly
+                    ? DismissDirection.none
+                    : DismissDirection.endToStart,
+                confirmDismiss: (direction) async {
+                  return await ConfirmBottomSheet.show(
+                    context,
+                    title: 'DELETE MEAL',
+                    message: 'Are you sure you want to remove this meal?',
+                    confirmLabel: 'DELETE',
+                  );
+                },
+                background: Container(
+                  alignment: Alignment.centerRight,
+                  padding: const EdgeInsets.only(right: MonoSpacing.base),
+                  color: MonoColors.danger,
+                  child: const Icon(Icons.delete, color: Colors.white),
+                ),
+                onDismissed: (_) => provider.deleteMeal(meal.id),
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(MonoSpacing.sm),
+                  decoration: MonoDecor.card(),
+                  child: Row(
+                    children: [
+                      Container(
+                        width: 60,
+                        height: 60,
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: MonoColors.border,
+                            width: 2,
                           ),
-                          Gap.hBase,
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
+                          image: meal.image.isNotEmpty
+                              ? DecorationImage(
+                                  image: NetworkImage(
+                                    () {
+                                      String url = meal.image;
+                                      if (!url.startsWith('http')) {
+                                        url =
+                                            '${AppConfig.apiUrl}${meal.image}';
+                                      }
+                                      if (!kIsWeb && Platform.isAndroid) {
+                                        url = url.replaceFirst(
+                                          'monolog.localhost',
+                                          '10.0.2.2',
+                                        );
+                                      }
+                                      return url;
+                                    }(),
+                                    headers: {
+                                      if (!kIsWeb && Platform.isAndroid)
+                                        'Host': AppConfig.domain,
+                                    },
+                                  ),
+                                  fit: BoxFit.cover,
+                                )
+                              : null,
+                        ),
+                        child: meal.image.isEmpty
+                            ? const Icon(
+                                Icons.restaurant,
+                                color: MonoColors.textMuted,
+                                size: 20,
+                              )
+                            : null,
+                      ),
+                      Gap.hBase,
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              meal.name,
+                              style: MonoText.h3,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            Row(
                               children: [
-                                Text(meal.name, style: MonoText.h3, overflow: TextOverflow.ellipsis),
-                                Row(
-                                  children: [
-                                    Text(
-                                      '${meal.protein}g',
-                                      style: MonoText.labelSm.copyWith(color: MonoColors.amber),
-                                    ),
-                                    Gap.hXs,
-                                    Text(
-                                      'PROTEIN',
-                                      style: MonoText.labelSm.copyWith(color: MonoColors.textMuted, fontSize: 9),
-                                    ),
-                                  ],
+                                Text(
+                                  '${meal.protein}g',
+                                  style: MonoText.labelSm.copyWith(
+                                    color: MonoColors.amber,
+                                  ),
+                                ),
+                                Gap.hXs,
+                                Text(
+                                  'PROTEIN',
+                                  style: MonoText.labelSm.copyWith(
+                                    color: MonoColors.textMuted,
+                                    fontSize: 9,
+                                  ),
                                 ),
                               ],
                             ),
+                          ],
+                        ),
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            '${meal.calories}',
+                            style: MonoText.numberSm.copyWith(
+                              color: MonoColors.textPrimary,
+                            ),
                           ),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Text(
-                                '${meal.calories}',
-                                style: MonoText.numberSm.copyWith(color: MonoColors.textPrimary),
-                              ),
-                              Text(
-                                'CAL',
-                                style: MonoText.labelSm.copyWith(color: MonoColors.textMuted, fontSize: 9),
-                              ),
-                            ],
+                          Text(
+                            'CAL',
+                            style: MonoText.labelSm.copyWith(
+                              color: MonoColors.textMuted,
+                              fontSize: 9,
+                            ),
                           ),
                         ],
                       ),
-                    ),
+                    ],
+                  ),
                 ),
-              )),
+              ),
+            ),
+          ),
         if (!readOnly) ...[
           Gap.md,
           TileButton(

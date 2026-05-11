@@ -44,7 +44,7 @@ class DayProvider extends ChangeNotifier {
 
       final result = await _service.sdk.records.list(
         AppConfig.daysCollection,
-        filter: 'date = "$dateStr" && user = "$_userId"',
+        filter: 'date(date) = "$dateStr" && user = "$_userId"',
       );
 
       if (result.data.isNotEmpty) {

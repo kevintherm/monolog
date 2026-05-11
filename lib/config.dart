@@ -6,7 +6,7 @@ class AppConfig {
 
   static const String env = "production"; // local, production
 
-  static const String domain = 'chantal-strawless-ulcerously.ngrok-free.dev';
+  static const String domain = 'monolog-veloquent.kevindarma.one';
 
   static String get apiUrl {
     if (!kIsWeb && Platform.isAndroid && env == "local") {
@@ -14,9 +14,6 @@ class AppConfig {
     }
     return 'https://$domain';
   }
-
-  static const String realtimeAppKey = 'somerandomstring';
-  static const String realtimeAppId = '123456';
 
   static const String usersCollection = 'users';
   static const String daysCollection = 'days';

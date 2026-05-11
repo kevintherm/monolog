@@ -31,6 +31,17 @@ class MonoLogApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         theme: buildMonoLogTheme(),
         initialRoute: '/login',
+        builder: (context, child) {
+          return Container(
+            color: const Color(0xFF0F0F0F),
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 500),
+                child: child!,
+              ),
+            ),
+          );
+        },
         onGenerateRoute: (settings) {
           Widget page;
           switch (settings.name) {
@@ -66,18 +77,22 @@ class MonoLogApp extends StatelessWidget {
           return PageRouteBuilder(
             settings: settings,
             pageBuilder: (context, animation, secondaryAnimation) => page,
-            transitionsBuilder: (context, animation, secondaryAnimation, child) {
-              return SlideTransition(
-                position: Tween<Offset>(
-                  begin: const Offset(1, 0),
-                  end: Offset.zero,
-                ).animate(CurvedAnimation(
-                  parent: animation,
-                  curve: Curves.easeOutCubic,
-                )),
-                child: child,
-              );
-            },
+            transitionsBuilder:
+                (context, animation, secondaryAnimation, child) {
+                  return SlideTransition(
+                    position:
+                        Tween<Offset>(
+                          begin: const Offset(1, 0),
+                          end: Offset.zero,
+                        ).animate(
+                          CurvedAnimation(
+                            parent: animation,
+                            curve: Curves.easeOutCubic,
+                          ),
+                        ),
+                    child: child,
+                  );
+                },
             transitionDuration: const Duration(milliseconds: 300),
           );
         },
